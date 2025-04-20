@@ -1,0 +1,23 @@
+[package]
+name = "mistral-server-core-test"
+authors = ["Matthew Haynes"]
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.95"
+# Make sure to match mistral axum
+axum = { version = "0.7.4", features = ["json", "tokio"] }
+# mistralrs = { git = "https://github.com/EricLBuehler/mistral.rs.git", version = "0.5.0" }
+# mistralrs = { git = "https://github.com/matthewhaynesonline/mistral.rs.git", branch = "expose-server-routes" }
+mistralrs = { git = "https://github.com/matthewhaynesonline/mistral.rs.git", branch = "expose-server-routes" }
+mistralrs-server-core = { git = "https://github.com/matthewhaynesonline/mistral.rs.git", branch = "expose-server-routes" }
+# # mistralrs-core = { path = "../mistral.rs" }
+# mistralrs = { path = "../mistral.rs" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+tower-http = { version = "0.6.2", features = ["catch-panic", "fs", "trace"] }
+uuid = { version = "1.14.0", features = ["v4"] }
+utoipa = { version = "5.3.1", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "9.0.1", features = ["axum", "vendored"] }
