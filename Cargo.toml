@@ -19,5 +19,8 @@ serde_json = "1"
 tokio = { version = "1", features = ["full"] }
 tower-http = { version = "0.6.2", features = ["catch-panic", "fs", "trace"] }
 uuid = { version = "1.14.0", features = ["v4"] }
-utoipa = { version = "5.3.1", features = ["axum_extras"] }
-utoipa-swagger-ui = { version = "9.0.1", features = ["axum", "vendored"] }
+utoipa = { version = "4.2", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "7.1.0", features = ["axum"] }
+
+[features]
+metal = ["mistralrs/metal", "mistralrs-server-core/metal"]

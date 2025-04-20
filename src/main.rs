@@ -1,12 +1,23 @@
-use axum::{
-    Json, Router,
-    http::StatusCode,
-    routing::{get, post},
-};
-use serde::{Deserialize, Serialize};
+use axum::{Router, routing::get};
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 
 use mistralrs::{AutoDeviceMapParams, ModelDType, ModelSelected, TokenSource};
-use mistralrs_server_core::{Args, get_router_core};
+use mistralrs_server_core::{Args, get_openapi_doc, get_router_core};
+
+#[derive(OpenApi)]
+#[openapi(
+    paths(root),
+    tags(
+        (name = "hello", description = "Hello world endpoints")
+    ),
+    info(
+        title = "Hello World API",
+        version = "1.0.0",
+        description = "A simple API that responds with a greeting"
+    )
+)]
+struct ApiDoc;
 
 #[tokio::main]
 async fn main() {
@@ -60,15 +71,35 @@ async fn main() {
         search_bert_model: None,
     };
 
-    let mistral_routes = get_router_core(args).await.unwrap();
+    let mistral_routes = get_router_core(args, false, Some("/api/mistral"))
+        .await
+        .unwrap();
 
-    let app = Router::new().route("/", get(root)).merge(mistral_routes);
+    let mistral_base_path = "/api/mistral";
+
+    let mistral_doc = get_openapi_doc(Some(mistral_base_path));
+    let mut api_docs = ApiDoc::openapi();
+    api_docs.merge(mistral_doc);
+
+    let app = Router::new()
+        .route("/", get(root))
+        .nest(mistral_base_path, mistral_routes)
+        .merge(SwaggerUi::new("/api-docs").url("/api-docs/openapi.json", api_docs));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
+
+    println!("Listening on 0.0.0.0:3000");
 }
 
-// basic handler that responds with a static string
+#[utoipa::path(
+    get,
+    path = "/",
+    tag = "hello",
+    responses(
+        (status = 200, description = "Successful response with greeting message", body = String)
+    )
+)]
 async fn root() -> &'static str {
     "Hello, World!"
 }
