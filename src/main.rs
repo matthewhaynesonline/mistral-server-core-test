@@ -23,16 +23,15 @@ struct ApiDoc;
 async fn main() {
     // tracing_subscriber::fmt::init();
 
-    let tok_model_id = Some(String::from("microsoft/Phi-3.5-mini-instruct"));
-    let quantized_model_id = String::from("bartowski/Phi-3.5-mini-instruct-GGUF");
-    let quantized_filename = String::from("Phi-3.5-mini-instruct-Q4_K_M.gguf");
+    let quantized_model_id = String::from("bartowski/Llama-3.2-1B-Instruct-GGUF");
+    let quantized_filename = String::from("Llama-3.2-1B-Instruct-Q4_K_M.gguf");
     let dtype = ModelDType::Auto;
     let topology = None;
     let max_seq_len = AutoDeviceMapParams::DEFAULT_MAX_SEQ_LEN;
     let max_batch_size = AutoDeviceMapParams::DEFAULT_MAX_BATCH_SIZE;
 
     let model = ModelSelected::GGUF {
-        tok_model_id,
+        tok_model_id: None,
         quantized_model_id,
         quantized_filename,
         dtype,
