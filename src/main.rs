@@ -3,7 +3,7 @@ use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
 use mistralrs::{AutoDeviceMapParams, ModelDType, ModelSelected, TokenSource};
-use mistralrs_server_core::{Args, get_openapi_doc, get_router_core};
+use mistralrs_server_core::{Args, bootstrap_mistralrs_router, get_openapi_doc};
 
 #[derive(OpenApi)]
 #[openapi(
@@ -47,7 +47,7 @@ async fn main() {
         port: None,
         log: None,
         truncate_sequence: true,
-        model: model,
+        model,
         max_seqs: 16,
         no_kv_cache: false,
         chat_template: None,
@@ -66,16 +66,16 @@ async fn main() {
         throughput_log: true,
         prompt_chunksize: None,
         cpu: true,
-        interactive_search: true,
         enable_search: false,
         search_bert_model: None,
+        enable_thinking: false,
     };
 
-    let mistral_routes = get_router_core(args, false, Some("/api/mistral"))
+    let mistral_base_path = "/api/mistral";
+
+    let mistral_routes = bootstrap_mistralrs_router(args, false, Some(mistral_base_path))
         .await
         .unwrap();
-
-    let mistral_base_path = "/api/mistral";
 
     let mistral_doc = get_openapi_doc(Some(mistral_base_path));
     let mut api_docs = ApiDoc::openapi();
