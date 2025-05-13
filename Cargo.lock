@@ -28,6 +28,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "512761e0bb2578dd7380c6baaa0f4ce03e84f95e960231d1dec8bf4d7d6e2627"
 
 [[package]]
+name = "ahash"
+version = "0.8.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
+dependencies = [
+ "cfg-if",
+ "getrandom 0.3.3",
+ "once_cell",
+ "version_check",
+ "zerocopy",
+]
+
+[[package]]
 name = "aho-corasick"
 version = "1.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -41,6 +54,12 @@ name = "akin"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1763692fc1416554cf051efc56a3de5595eca47299d731cc5c2b583adf8b4d2f"
+
+[[package]]
+name = "allocator-api2"
+version = "0.2.21"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
 
 [[package]]
 name = "android-tzdata"
@@ -1002,6 +1021,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 
 [[package]]
+name = "foldhash"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
+
+[[package]]
 name = "foreign-types"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1373,6 +1398,11 @@ name = "hashbrown"
 version = "0.15.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "84b26c544d002229e640969970a2e74021aadf6e2f96372b9c58eff97de08eb3"
+dependencies = [
+ "allocator-api2",
+ "equivalent",
+ "foldhash",
+]
 
 [[package]]
 name = "heck"
@@ -2117,7 +2147,7 @@ dependencies = [
 [[package]]
 name = "mistralrs"
 version = "0.5.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=expose-server-routes#43432d7d53cdf5a63d7da38b4b6fd6776cbb7368"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=expose-server-routes#16292890aebb9d76510287980ae1635c4b39a9cf"
 dependencies = [
  "anyhow",
  "candle-core",
@@ -2138,8 +2168,9 @@ dependencies = [
 [[package]]
 name = "mistralrs-core"
 version = "0.5.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=expose-server-routes#43432d7d53cdf5a63d7da38b4b6fd6776cbb7368"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=expose-server-routes#16292890aebb9d76510287980ae1635c4b39a9cf"
 dependencies = [
+ "ahash",
  "akin",
  "anyhow",
  "as-any",
@@ -2161,6 +2192,7 @@ dependencies = [
  "futures",
  "galil-seiferas",
  "half",
+ "hashbrown",
  "hf-hub",
  "html2text",
  "image",
@@ -2179,6 +2211,7 @@ dependencies = [
  "objc",
  "once_cell",
  "ordered-float",
+ "parking_lot",
  "radix_trie",
  "rand 0.9.1",
  "rand_isaac",
@@ -2215,7 +2248,7 @@ dependencies = [
 [[package]]
 name = "mistralrs-paged-attn"
 version = "0.5.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=expose-server-routes#43432d7d53cdf5a63d7da38b4b6fd6776cbb7368"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=expose-server-routes#16292890aebb9d76510287980ae1635c4b39a9cf"
 dependencies = [
  "anyhow",
  "candle-core",
@@ -2229,7 +2262,7 @@ dependencies = [
 [[package]]
 name = "mistralrs-quant"
 version = "0.5.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=expose-server-routes#43432d7d53cdf5a63d7da38b4b6fd6776cbb7368"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=expose-server-routes#16292890aebb9d76510287980ae1635c4b39a9cf"
 dependencies = [
  "byteorder",
  "candle-core",
@@ -2255,7 +2288,7 @@ dependencies = [
 [[package]]
 name = "mistralrs-server-core"
 version = "0.5.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=expose-server-routes#43432d7d53cdf5a63d7da38b4b6fd6776cbb7368"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=expose-server-routes#16292890aebb9d76510287980ae1635c4b39a9cf"
 dependencies = [
  "anyhow",
  "axum",
@@ -2286,7 +2319,7 @@ dependencies = [
 [[package]]
 name = "mistralrs-vision"
 version = "0.5.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=expose-server-routes#43432d7d53cdf5a63d7da38b4b6fd6776cbb7368"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=expose-server-routes#16292890aebb9d76510287980ae1635c4b39a9cf"
 dependencies = [
  "candle-core",
  "image",
