@@ -3,8 +3,8 @@ use axum::{Json, extract::State};
 use mistralrs_server_core::{
     SharedMistralState,
     chat_completion::{
-        ChatCompletionResponder, create_chat_streamer, create_response_channel, handle_error,
-        parse_request, process_non_streaming_chat_response, send_request,
+        ChatCompletionResponder, StreamerChunks, create_chat_streamer, create_response_channel,
+        handle_error, parse_request, process_non_streaming_chat_response, send_request,
     },
     openai::ChatCompletionRequest,
 };
@@ -36,7 +36,7 @@ pub async fn custom_chat(
 
     if is_streaming {
         // For streaming, we need to wrap the streamer to capture all chunks
-        let base_streamer = create_chat_streamer(rx, state.clone());
+        let base_streamer = create_chat_streamer(rx, state.clone(), Some(stream_complete));
 
         // Wrap the streamer to capture the full response
         // let capturing_streamer = ResponseCapturingStreamer::new(base_streamer, state.clone());
@@ -58,4 +58,8 @@ pub async fn custom_chat(
 
         response
     }
+}
+
+pub fn stream_complete(chunks: StreamerChunks) {
+    dbg!(chunks);
 }
