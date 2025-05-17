@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use axum::{
     Router,
     routing::{get, post},
@@ -7,7 +9,8 @@ use utoipa_swagger_ui::SwaggerUi;
 
 use mistralrs::{AutoDeviceMapParams, ModelDType, ModelSelected, TokenSource};
 use mistralrs_server_core::{
-    Args, bootstrap_mistralrs, bootstrap_mistralrs_router_from_state, get_openapi_doc,
+    Args, SharedMistralState, bootstrap_mistralrs, bootstrap_mistralrs_router_from_state,
+    get_openapi_doc,
 };
 
 pub mod controllers;
@@ -26,6 +29,12 @@ use controllers::custom_chat;
     )
 )]
 struct ApiDoc;
+
+#[derive(Clone)]
+pub struct AppState {
+    pub mistral_state: SharedMistralState,
+    pub db_create: fn(),
+}
 
 #[tokio::main]
 async fn main() {
@@ -94,10 +103,15 @@ async fn main() {
     let mut api_docs = ApiDoc::openapi();
     api_docs.merge(mistral_doc);
 
+    let app_state = Arc::new(AppState {
+        mistral_state: shared_mistralrs,
+        db_create: mock_db_call,
+    });
+
     let app = Router::new()
         .route("/", get(root))
         .route("/chat", post(custom_chat))
-        .with_state(shared_mistralrs.clone())
+        .with_state(app_state.clone())
         .nest(mistral_base_path, mistral_routes)
         .merge(SwaggerUi::new("/api-docs").url("/api-docs/openapi.json", api_docs));
 
@@ -117,4 +131,8 @@ async fn main() {
 )]
 async fn root() -> &'static str {
     "Hello, World!"
+}
+
+pub fn mock_db_call() {
+    println!("Saving to DB");
 }
