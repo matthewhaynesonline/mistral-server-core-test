@@ -7,7 +7,7 @@ use axum::{
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
-use mistralrs::{AutoDeviceMapParams, ModelDType, ModelSelected, TokenSource};
+use mistralrs::{AutoDeviceMapParams, ModelDType, ModelSelected};
 use mistralrs_server_core::{
     Args, SharedMistralState, bootstrap_mistralrs, bootstrap_mistralrs_router_from_state,
     get_openapi_doc,
@@ -56,33 +56,8 @@ async fn main() {
     };
 
     let args = Args {
-        serve_ip: None,
-        seed: None,
-        port: None,
-        log: None,
-        truncate_sequence: true,
         model,
-        max_seqs: 16,
-        no_kv_cache: false,
-        chat_template: None,
-        jinja_explicit: None,
-        token_source: TokenSource::CacheToken,
-        interactive_mode: false,
-        prefix_cache_n: 16,
-        num_device_layers: None,
-        in_situ_quant: None,
-        paged_attn_gpu_mem: None,
-        paged_attn_gpu_mem_usage: None,
-        paged_ctxt_len: None,
-        paged_attn_block_size: None,
-        no_paged_attn: false,
-        paged_attn: true,
-        throughput_log: true,
-        prompt_chunksize: None,
-        cpu: true,
-        enable_search: false,
-        search_bert_model: None,
-        enable_thinking: false,
+        ..Args::default()
     };
 
     let shared_mistralrs = bootstrap_mistralrs(args).await.unwrap();
