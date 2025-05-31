@@ -5,8 +5,9 @@ use axum::{Json, extract::State};
 use mistralrs::ChatCompletionChunkResponse;
 use mistralrs_server_core::{
     chat_completion::{
-        ChatCompletionResponder, OnDoneCallback, create_chat_streamer, create_response_channel,
-        handle_error, parse_request, process_non_streaming_chat_response, send_request,
+        ChatCompletionResponder, OnChunkCallback, OnDoneCallback, create_chat_streamer,
+        create_response_channel, handle_error, parse_request, process_non_streaming_chat_response,
+        send_request,
     },
     openai::ChatCompletionRequest,
 };
@@ -41,12 +42,24 @@ pub async fn custom_chat(
 
     if is_streaming {
         let db_fn = state.db_create;
+
+        let on_chunk: OnChunkCallback = Box::new(move |mut chunk: ChatCompletionChunkResponse| {
+            dbg!(&chunk);
+
+            if let Some(original_content) = &chunk.choices[0].delta.content {
+                chunk.choices[0].delta.content = Some(format!("CHANGED! {}", original_content));
+            }
+
+            chunk.clone()
+        });
+
         let on_done: OnDoneCallback = Box::new(move |chunks: &[ChatCompletionChunkResponse]| {
             dbg!(chunks);
             (db_fn)();
         });
 
-        let streamer = create_chat_streamer(rx, mistral_state.clone(), Some(on_done));
+        let streamer =
+            create_chat_streamer(rx, mistral_state.clone(), Some(on_chunk), Some(on_done));
 
         ChatCompletionResponder::Sse(streamer)
     } else {

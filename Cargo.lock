@@ -2188,7 +2188,7 @@ dependencies = [
 [[package]]
 name = "mistralrs"
 version = "0.6.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#1c1c236efdfc3c07e72485a58e779f2fca4c9730"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#5706db3b3087b13f5589a4bde4488431f19b1efe"
 dependencies = [
  "anyhow",
  "candle-core",
@@ -2209,7 +2209,7 @@ dependencies = [
 [[package]]
 name = "mistralrs-core"
 version = "0.6.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#1c1c236efdfc3c07e72485a58e779f2fca4c9730"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#5706db3b3087b13f5589a4bde4488431f19b1efe"
 dependencies = [
  "ahash",
  "akin",
@@ -2292,7 +2292,7 @@ dependencies = [
 [[package]]
 name = "mistralrs-paged-attn"
 version = "0.6.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#1c1c236efdfc3c07e72485a58e779f2fca4c9730"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#5706db3b3087b13f5589a4bde4488431f19b1efe"
 dependencies = [
  "anyhow",
  "candle-core",
@@ -2306,7 +2306,7 @@ dependencies = [
 [[package]]
 name = "mistralrs-quant"
 version = "0.6.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#1c1c236efdfc3c07e72485a58e779f2fca4c9730"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#5706db3b3087b13f5589a4bde4488431f19b1efe"
 dependencies = [
  "byteorder",
  "candle-core",
@@ -2332,7 +2332,7 @@ dependencies = [
 [[package]]
 name = "mistralrs-server-core"
 version = "0.6.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#1c1c236efdfc3c07e72485a58e779f2fca4c9730"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#5706db3b3087b13f5589a4bde4488431f19b1efe"
 dependencies = [
  "anyhow",
  "axum",
@@ -2363,7 +2363,7 @@ dependencies = [
 [[package]]
 name = "mistralrs-vision"
 version = "0.6.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#1c1c236efdfc3c07e72485a58e779f2fca4c9730"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#5706db3b3087b13f5589a4bde4488431f19b1efe"
 dependencies = [
  "candle-core",
  "image",
