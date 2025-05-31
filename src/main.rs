@@ -9,8 +9,9 @@ use utoipa_swagger_ui::SwaggerUi;
 
 use mistralrs::{AutoDeviceMapParams, ModelDType, ModelSelected};
 use mistralrs_server_core::{
-    Args, SharedMistralState, bootstrap_mistralrs, bootstrap_mistralrs_router_from_state,
-    get_openapi_doc,
+    mistralrs_for_server_builder::MistralRsForServerBuilder,
+    mistralrs_server_router_builder::MistralRsServerRouterBuilder, openapi_doc::get_openapi_doc,
+    types::SharedMistralState,
 };
 
 pub mod controllers;
@@ -38,39 +39,75 @@ pub struct AppState {
 
 #[tokio::main]
 async fn main() {
-    let quantized_model_id = String::from("bartowski/Llama-3.2-1B-Instruct-GGUF");
-    let quantized_filename = String::from("Llama-3.2-1B-Instruct-Q4_K_M.gguf");
+    let plain_model_id = String::from("meta-llama/Llama-3.2-1B-Instruct");
+    let tokenizer_json = None;
+    let arch = None;
+    let organization = None;
+    let write_uqff = None;
+    let from_uqff = None;
+    let imatrix = None;
+    let calibration_file = None;
+    let hf_cache_path = None;
+
+    // let quantized_model_id = String::from("bartowski/Llama-3.2-1B-Instruct-GGUF");
+    // let quantized_filename = String::from("Llama-3.2-1B-Instruct-Q4_K_M.gguf");
+
     let dtype = ModelDType::Auto;
     let topology = None;
     let max_seq_len = AutoDeviceMapParams::DEFAULT_MAX_SEQ_LEN;
     let max_batch_size = AutoDeviceMapParams::DEFAULT_MAX_BATCH_SIZE;
 
-    let model = ModelSelected::GGUF {
-        tok_model_id: None,
-        quantized_model_id,
-        quantized_filename,
+    // let model = ModelSelected::GGUF {
+    //     tok_model_id: None,
+    //     quantized_model_id,
+    //     quantized_filename,
+    //     dtype,
+    //     topology,
+    //     max_seq_len,
+    //     max_batch_size,
+    // };
+
+    let model = ModelSelected::Plain {
+        model_id: plain_model_id,
+        tokenizer_json,
+        arch,
         dtype,
         topology,
+        organization,
+        write_uqff,
+        from_uqff,
+        imatrix,
+        calibration_file,
         max_seq_len,
         max_batch_size,
+        hf_cache_path,
     };
 
-    let args = Args {
-        model,
-        ..Args::default()
-    };
+    // let args = Args {
+    //     model,
+    //     ..Args::default()
+    // };
 
-    let shared_mistralrs = bootstrap_mistralrs(args).await.unwrap();
+    // Use ISQ instead of GGUF
+    // https://github.com/EricLBuehler/mistral.rs/issues/1383
+
+    let shared_mistralrs = MistralRsForServerBuilder::new()
+        .with_model(model)
+        .with_in_situ_quant("8".to_string())
+        .with_paged_attn(true)
+        .build()
+        .await
+        .unwrap();
 
     let mistral_base_path = "/api/mistral";
 
-    let mistral_routes = bootstrap_mistralrs_router_from_state(
-        shared_mistralrs.clone(),
-        false,
-        Some(mistral_base_path),
-    )
-    .await
-    .unwrap();
+    let mistral_routes = MistralRsServerRouterBuilder::new()
+        .with_mistralrs(shared_mistralrs.clone())
+        .with_include_swagger_routes(false)
+        .with_base_path(mistral_base_path)
+        .build()
+        .await
+        .unwrap();
 
     let mistral_doc = get_openapi_doc(Some(mistral_base_path));
     let mut api_docs = ApiDoc::openapi();

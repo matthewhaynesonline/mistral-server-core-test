@@ -4,7 +4,7 @@ curl -X 'POST' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{
-  "model": "bartowski/Llama-3.2-1B-Instruct-GGUF",
+  "model": "placeholder",
   "messages": [{
     "role": "system",
     "content": "You are a helpful bot that ends everything with Yea BOI!."
@@ -19,7 +19,7 @@ curl -X 'POST' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{
-  "model": "bartowski/Llama-3.2-1B-Instruct-GGUF",
+  "model": "placeholder",
   "messages": [{
     "role": "user",
     "content": "hi!"
@@ -31,7 +31,7 @@ curl -X 'POST' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{
-  "model": "bartowski/Llama-3.2-1B-Instruct-GGUF",
+  "model": "placeholder",
   "stream": true,
   "messages": [{
     "role": "user",
