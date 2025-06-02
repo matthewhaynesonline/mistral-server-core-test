@@ -19,7 +19,7 @@ use mistralrs_server_core::{
     mistralrs_server_router_builder::MistralRsServerRouterBuilder,
     openai::ChatCompletionRequest,
     openapi_doc::get_openapi_doc,
-    types::SharedMistralState,
+    types::SharedMistralRsState,
 };
 
 #[derive(OpenApi)]
@@ -38,7 +38,7 @@ struct ApiDoc;
 
 #[derive(Clone)]
 pub struct AppState {
-    pub mistral_state: SharedMistralState,
+    pub mistral_state: SharedMistralRsState,
     pub db_create: fn(),
 }
 
@@ -147,7 +147,7 @@ pub async fn custom_chat(
     Json(oai_request): Json<ChatCompletionRequest>,
 ) -> ChatCompletionResponder {
     let mistral_state = state.mistral_state.clone();
-    let (tx, mut rx) = create_response_channel();
+    let (tx, mut rx) = create_response_channel(None);
 
     let (request, is_streaming) = match parse_request(oai_request, mistral_state.clone(), tx).await
     {
