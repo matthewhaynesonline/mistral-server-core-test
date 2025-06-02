@@ -1,25 +1,30 @@
 use std::sync::Arc;
 
 use axum::{
-    Router,
+    Json, Router,
+    extract::State,
     routing::{get, post},
 };
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
-use mistralrs::{AutoDeviceMapParams, ModelDType, ModelSelected};
+use mistralrs::{AutoDeviceMapParams, ChatCompletionChunkResponse, ModelDType, ModelSelected};
 use mistralrs_server_core::{
+    chat_completion::{
+        ChatCompletionResponder, OnChunkCallback, OnDoneCallback, create_chat_streamer,
+        create_response_channel, handle_chat_completion_error, parse_request,
+        process_non_streaming_chat_response, send_request,
+    },
     mistralrs_for_server_builder::MistralRsForServerBuilder,
-    mistralrs_server_router_builder::MistralRsServerRouterBuilder, openapi_doc::get_openapi_doc,
+    mistralrs_server_router_builder::MistralRsServerRouterBuilder,
+    openai::ChatCompletionRequest,
+    openapi_doc::get_openapi_doc,
     types::SharedMistralState,
 };
 
-pub mod controllers;
-use controllers::custom_chat;
-
 #[derive(OpenApi)]
 #[openapi(
-    paths(root, controllers::custom_chat),
+    paths(root, custom_chat),
     tags(
         (name = "hello", description = "Hello world endpoints")
     ),
@@ -49,23 +54,10 @@ async fn main() {
     let calibration_file = None;
     let hf_cache_path = None;
 
-    // let quantized_model_id = String::from("bartowski/Llama-3.2-1B-Instruct-GGUF");
-    // let quantized_filename = String::from("Llama-3.2-1B-Instruct-Q4_K_M.gguf");
-
     let dtype = ModelDType::Auto;
     let topology = None;
     let max_seq_len = AutoDeviceMapParams::DEFAULT_MAX_SEQ_LEN;
     let max_batch_size = AutoDeviceMapParams::DEFAULT_MAX_BATCH_SIZE;
-
-    // let model = ModelSelected::GGUF {
-    //     tok_model_id: None,
-    //     quantized_model_id,
-    //     quantized_filename,
-    //     dtype,
-    //     topology,
-    //     max_seq_len,
-    //     max_batch_size,
-    // };
 
     let model = ModelSelected::Plain {
         model_id: plain_model_id,
@@ -141,6 +133,70 @@ async fn main() {
 )]
 async fn root() -> &'static str {
     "Hello, World!"
+}
+
+#[utoipa::path(
+  post,
+  tag = "Custom",
+  path = "/chat",
+  request_body = ChatCompletionRequest,
+  responses((status = 200, description = "Chat completions"))
+)]
+pub async fn custom_chat(
+    State(state): State<Arc<AppState>>,
+    Json(oai_request): Json<ChatCompletionRequest>,
+) -> ChatCompletionResponder {
+    let mistral_state = state.mistral_state.clone();
+    let (tx, mut rx) = create_response_channel();
+
+    let (request, is_streaming) = match parse_request(oai_request, mistral_state.clone(), tx).await
+    {
+        Ok(x) => x,
+        Err(e) => return handle_chat_completion_error(mistral_state, e.into()),
+    };
+
+    dbg!(request.clone());
+
+    if let Err(e) = send_request(&mistral_state, request).await {
+        return handle_chat_completion_error(mistral_state, e.into());
+    }
+
+    if is_streaming {
+        let db_fn = state.db_create;
+
+        let on_chunk: OnChunkCallback = Box::new(move |mut chunk: ChatCompletionChunkResponse| {
+            dbg!(&chunk);
+
+            if let Some(original_content) = &chunk.choices[0].delta.content {
+                chunk.choices[0].delta.content = Some(format!("CHANGED! {}", original_content));
+            }
+
+            chunk.clone()
+        });
+
+        let on_done: OnDoneCallback = Box::new(move |chunks: &[ChatCompletionChunkResponse]| {
+            dbg!(chunks);
+            (db_fn)();
+        });
+
+        let streamer =
+            create_chat_streamer(rx, mistral_state.clone(), Some(on_chunk), Some(on_done));
+
+        ChatCompletionResponder::Sse(streamer)
+    } else {
+        let response = process_non_streaming_chat_response(&mut rx, mistral_state.clone()).await;
+
+        match &response {
+            ChatCompletionResponder::Json(json_response) => {
+                dbg!(json_response);
+            }
+            _ => {
+                //
+            }
+        }
+
+        response
+    }
 }
 
 pub fn mock_db_call() {

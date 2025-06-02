@@ -665,16 +665,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ctrlc"
-version = "3.4.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "46f93780a459b7d656ef7f071fe699c4d3d2cb201c4b24d085b6ddc505276e73"
-dependencies = [
- "nix",
- "windows-sys 0.59.0",
-]
-
-[[package]]
 name = "darling"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2188,7 +2178,7 @@ dependencies = [
 [[package]]
 name = "mistralrs"
 version = "0.6.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#5706db3b3087b13f5589a4bde4488431f19b1efe"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#840d44fdd9e2cc8b3ecd5e6063346edc7f2ea397"
 dependencies = [
  "anyhow",
  "candle-core",
@@ -2209,7 +2199,7 @@ dependencies = [
 [[package]]
 name = "mistralrs-core"
 version = "0.6.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#5706db3b3087b13f5589a4bde4488431f19b1efe"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#840d44fdd9e2cc8b3ecd5e6063346edc7f2ea397"
 dependencies = [
  "ahash",
  "akin",
@@ -2292,7 +2282,7 @@ dependencies = [
 [[package]]
 name = "mistralrs-paged-attn"
 version = "0.6.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#5706db3b3087b13f5589a4bde4488431f19b1efe"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#840d44fdd9e2cc8b3ecd5e6063346edc7f2ea397"
 dependencies = [
  "anyhow",
  "candle-core",
@@ -2306,7 +2296,7 @@ dependencies = [
 [[package]]
 name = "mistralrs-quant"
 version = "0.6.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#5706db3b3087b13f5589a4bde4488431f19b1efe"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#840d44fdd9e2cc8b3ecd5e6063346edc7f2ea397"
 dependencies = [
  "byteorder",
  "candle-core",
@@ -2325,6 +2315,7 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror 1.0.69",
+ "tokio",
  "tracing",
  "yoke 0.7.5",
 ]
@@ -2332,13 +2323,11 @@ dependencies = [
 [[package]]
 name = "mistralrs-server-core"
 version = "0.6.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#5706db3b3087b13f5589a4bde4488431f19b1efe"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#840d44fdd9e2cc8b3ecd5e6063346edc7f2ea397"
 dependencies = [
  "anyhow",
  "axum",
  "candle-core",
- "clap",
- "ctrlc",
  "data-url",
  "either",
  "futures",
@@ -2346,13 +2335,10 @@ dependencies = [
  "indexmap",
  "itertools 0.13.0",
  "mistralrs-core",
- "once_cell",
- "regex",
  "reqwest",
  "serde",
  "serde_json",
  "tokio",
- "toml",
  "tower-http 0.5.2",
  "tracing",
  "url",
@@ -2363,7 +2349,7 @@ dependencies = [
 [[package]]
 name = "mistralrs-vision"
 version = "0.6.0"
-source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#5706db3b3087b13f5589a4bde4488431f19b1efe"
+source = "git+https://github.com/matthewhaynesonline/mistral.rs.git?branch=mistral-server-lib#840d44fdd9e2cc8b3ecd5e6063346edc7f2ea397"
 dependencies = [
  "candle-core",
  "image",
@@ -2404,18 +2390,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "77a5d83df9f36fe23f0c3648c6bbb8b0298bb5f1939c8f2704431371f4b84d43"
 dependencies = [
  "smallvec",
-]
-
-[[package]]
-name = "nix"
-version = "0.30.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "74523f3a35e05aba87a1d978330aef40f67b0304ac79c1c00b294c9830543db6"
-dependencies = [
- "bitflags 2.9.1",
- "cfg-if",
- "cfg_aliases",
- "libc",
 ]
 
 [[package]]
