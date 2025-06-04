@@ -1,3 +1,5 @@
+## This has been merged into Mistral.rs. See: https://ericlbuehler.github.io/mistral.rs/mistralrs_server_core/
+
 ```sh
 curl -X 'POST' \
   'http://localhost:3000/api/mistral/v1/chat/completions' \
@@ -28,6 +30,31 @@ curl -X 'POST' \
 
 curl -X 'POST' \
   'http://localhost:3000/api/mistral/v1/chat/completions' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "model": "placeholder",
+  "stream": true,
+  "messages": [{
+    "role": "user",
+    "content": "hi!"
+  }]
+}'
+
+curl -X 'POST' \
+  'http://localhost:3000/chat' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "model": "placeholder",
+  "messages": [{
+    "role": "user",
+    "content": "hi!"
+  }]
+}'
+
+curl -X 'POST' \
+  'http://localhost:3000/chat' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{
